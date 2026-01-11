@@ -4,8 +4,8 @@ import BackgroundPattern from '@/components/background-pattern';
 import PetContextProvider from '@/contexts/pet-context-provider';
 import SearchContextProvider from '@/contexts/search-context-provider';
 import { prisma } from '@/lib/db';
-import { Pet } from '@/lib/types';
 import { Toaster } from 'sonner';
+import { checkAuth, getPetsByUserId } from '@/lib/server-utils';
 
 export default async function layout({
   children,
@@ -21,8 +21,8 @@ export default async function layout({
   // }
   // const data: Pet[] = await response.json();
 
-  const data = await prisma.pet.findMany();
-
+  const session = await checkAuth();
+  const data = await getPetsByUserId(session.user.id);
   // Contexts are client components but wrapping components in a context provider
   // does not make everything wrapped client components, you can pass server components
   // through to client components as children, it is only when you import into a client

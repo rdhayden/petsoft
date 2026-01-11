@@ -149,3 +149,16 @@ npm run db:seed
 Using next-auth for authentication for example purposes. Would be better to use something like Auth0, Kinde Auth or Clerk in production.
 
 Also use JWT (JSON Web Tokens) rather than database sessions to avoid extra database calls. The downside is that after login all JWT data is stored in the client so its harder to revoke access before the token expires. However checking the database every time adds overhead but makes it easier to revoke access (by deleting the session in the database). There are solutions that use a combination of both (e.g. https://clerk.com/blog/combining-the-benefits-of-session-tokens-and-jwts). For simplicity this project uses JWT only.
+
+Note we have to set AUTH_SECRET in .env to make sure its available to next-auth to encrypt the JWT token in the cookie
+
+# Data Validation
+
+We use React Hook Form in combination with Zod to control form
+input data. React Hook Form provides performance benefits but it also makes it easier to use Zod as a resolver.
+
+Zod allows us to enforce schemas at runtime, and to use the same
+zod schema to validate the data on the front end for user experience and on the backend for security
+
+We only use React Hook Form for the pet-form.tsx, for auth-form.tsx, which is a very simple form, we just use Zod for data validation server side, but that does mean we have to define validations 
+in the form (like max length) and then separately server side. So its probably better to stick to React Hook Form + Zod + server actions. We've left this alternative example to make clear the difference

@@ -42,3 +42,8 @@ export type TPetForm = z.infer<typeof petFormSchema>;
 // should use a library to convert the prisma model id type to a zod schema
 // so that if it changes we only have to change it in one place, but for now we'll define it manually
 export const petIdSchema = z.cuid('Invalid pet ID');
+
+export const authSchema = z.object({
+  email: z.email().max(100),
+  password: z.string().max(100)
+})

@@ -8,7 +8,6 @@ import PetFormButton from './pet-form-button';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { petFormSchema, TPetForm } from '@/lib/validations';
-import { DEFAULT_PET_IMAGE_URL } from '@/config/constants';
 
 type PetFormProps = {
   actionType?: 'add' | 'edit';
@@ -29,19 +28,21 @@ export default function PetForm({
     formState: { errors },
   } = useForm<TPetForm>({
     resolver: zodResolver(petFormSchema),
-    defaultValues: {
+    defaultValues: actionType === 'edit' ? {
       name: selectedPet?.name,
       ownerName: selectedPet?.ownerName,
       imageUrl: selectedPet?.imageUrl,
       age: selectedPet?.age,
       notes: selectedPet?.notes,
-    },
+    } : undefined,
   });
 
   // - Note we trigger validation manually here on form submission because we're using
-  // server actions and using the action attribute on the form element, and the alternative
-  // of using handleSubmit from react hook form automatically triggers a client side submission
-  // which we're not using here.
+  // server actions and using the action attribute on the form element. 
+  // Using handleSubmit from react hook form automatically triggers a client side submission
+  // but then we wouldn't get the progressive enhancement benefit of server actions, which is that 
+  // the form loads before any javascript, and we wouldn't get the broader benefit of server actions
+  // taking care of the endpoint for posting the form
   // - Also note that trigger() returns a boolean indicating
   // whether the validation passed or not, the if statement checks this before proceeding
   // so that the form is not submitted if there are validation errors
