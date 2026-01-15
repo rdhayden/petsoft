@@ -92,12 +92,27 @@ const config = {
       } 
       
       if (isLoggedIn && isTryingToAccessApp) {
+        if (!auth?.user?.hasAccess) {
+          return Response.redirect(new URL('/payment', request.nextUrl));
+        }
         return true;
       } 
       
       if (isLoggedIn && !isTryingToAccessApp) {
-        // redirect requires an absolute URL
-        return Response.redirect(new URL('/app/dashboard', request.nextUrl));
+        // signUp and login both called signIn internally after succesful completion
+        // by default next-auth redirects to the page you are on after signIn success 
+        // so if we're logged in or signed up and trying to access login or signup page
+        // it probably means we were redirected there after succesful signIn so redirect
+        // the payment page if they haven't paid yet
+        if (
+          (request.nextUrl.pathname.includes('/login') || 
+          request.nextUrl.pathname.includes('/signup')) && 
+          !auth?.user?.hasAccess
+        ) {
+          return Response.redirect(new URL('/payment', request.nextUrl));
+        }
+        
+        return true;
       } 
       
       if (!isLoggedIn && !isTryingToAccessApp) {
@@ -106,7 +121,7 @@ const config = {
       
       return false;
     },
-    jwt: ({token, user}) => {
+    jwt: async ({token, user, trigger}) => {
       // this is invoked when jwt token is created
       
       if (user) {
@@ -121,8 +136,21 @@ const config = {
         //    so we created a next-auth.d.ts file, a d.ts declaration file get loaded whenever you 
         //    import a module of the same name without the js/ts/d.ts extension,
         //    so in this case we created a next-auth.d.ts in the same directory as this file
-        token.userId = user.id!;
+        token.userId = user.id;
+        token.email = user.email;
+        token.hasAccess = user.hasAccess;
       }
+
+      // if ( trigger === 'update' ) {
+      //   // The previous condition only runs on sign in
+      //   // when the session is updated (e.g. after payment) the jwt callback is 
+      //   // triggered with trigger==='update' so we can update the token values
+      //   // to reflect any changes to the user object
+      //   const userFromDb =await getUserByEmail(token.email);
+      //   if (userFromDb) {
+      //     token.hasAccess = userFromDb.hasAccess;
+      //   }
+      // }
 
       return token;
     },
@@ -130,6 +158,7 @@ const config = {
       // need to explicitly expose the data we want to be available unencrypted on the client
       // the token itself is encrypted
       session.user.id = token.userId;
+      session.user.hasAccess = token.hasAccess;
 
       return session;
     }

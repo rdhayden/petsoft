@@ -1,6 +1,6 @@
 'use server';
 
-import { auth, signIn, signOut } from '@/config/auth';
+import { signIn, signOut } from '@/config/auth';
 import { Prisma } from '@/generated/prisma/client';
 import { prisma } from '@/lib/db';
 import { checkAuth, getPetById } from '@/lib/server-utils';
@@ -11,7 +11,9 @@ import { AuthError } from 'next-auth';
 import { revalidatePath } from 'next/cache';
 import { isRedirectError } from 'next/dist/client/components/redirect';
 import { redirect } from 'next/navigation';
-import { check } from 'zod';
+import { success } from 'zod';
+
+const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY!);
 
 // Note this file is marked 'use server' so that all these functions execute server side wherever they're included
 
@@ -227,4 +229,34 @@ export async function deletePet(petId: unknown) {
     return { message: 'Error deleting pet' };
   }
   revalidatePath('/app', 'layout');
+}
+
+
+// --- payment actions ---
+
+export async function createCheckoutSession() {
+  // authentication check, after sign up the user is redirected to sign in
+  // sign in redirect the user to the payment page if they don't have an active subscription
+  const session = await checkAuth();
+
+  console.log("Creating checkout session for user:", session.user.email);
+
+  // create checkout session
+  const checkoutSession = await stripe.checkout.sessions.create({
+      customer_email: session.user.email,
+      line_items: [
+        { 
+          price: process.env.STRIPE_PRICE_ID,
+          quantity: 1,
+        }
+      ],
+      mode: 'payment',
+      success_url: `${process.env.CANONICAL_URL}/payment?success=true`,
+      cancel_url: `${process.env.CANONICAL_URL}/payment?canceled=true`, 
+    });
+
+  console.log("Checkout session created:", checkoutSession);
+
+  // redirect to checkout
+  redirect(checkoutSession.url);
 }

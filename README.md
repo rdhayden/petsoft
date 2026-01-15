@@ -162,3 +162,22 @@ zod schema to validate the data on the front end for user experience and on the 
 
 We only use React Hook Form for the pet-form.tsx, for auth-form.tsx, which is a very simple form, we just use Zod for data validation server side, but that does mean we have to define validations 
 in the form (like max length) and then separately server side. So its probably better to stick to React Hook Form + Zod + server actions. We've left this alternative example to make clear the difference
+
+# Payments
+
+Using stripe for payment integration 
+```bash 
+npm install stripe
+```
+
+Using ngrok as the api gateway, we need to install an api gateway for dev to test stripe because stripe uses a webhook to confirm payment and we can't provide a publically available endpoint usually on a desktop.
+
+Alternatively we could use the stripe CLI for this.
+
+```bash 
+ngrok http [port number]
+```
+
+Use the URL provided by ngrok as the baseURL, then configure stripe with webhook [baseURL]/api/stripe
+
+And add the event for checkout completed as the webhook on stripe
