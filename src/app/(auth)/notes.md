@@ -1,1 +1,0 @@
-Folders in parantheses are special in Next.js and denote that they are not part of the URL structure. For example, a folder named (app) will not appear in the URL path. They are called route groups and are used to organize files without affecting the routing.
