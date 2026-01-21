@@ -20,9 +20,7 @@ export default async function layout({
   children: React.ReactNode;
 }) {
   const data = await getPets();
-  const session = await auth();
-  const userId = session?.user?.id;
-  const isPaidUser = userId && await getUserPaidStatus(userId) || false;
+  
   // Contexts are client components but wrapping components in a context provider
   // does not make everything wrapped client components, you can pass server components
   // through to client components as children, it is only when you import into a client

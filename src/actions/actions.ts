@@ -1,10 +1,11 @@
 'use server';
 
-import prisma from '@/lib/prisma';
 import { sleep } from '@/lib/utils';
 import { petFormSchema, petIdSchema } from '@/lib/validations';
 import { Session } from 'next-auth';
 import { revalidatePath } from 'next/cache';
+import { drizzleDb } from ./utils;
+import { eq } from 'drizzle-orm';
 
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY!);
 
@@ -39,16 +40,12 @@ export async function addPet(pet: unknown) {
   }
 
   // We add the User to the data recieved from the form, we get this from
-  // the next-auth session, and prisma uses this connect object when its 
-  // creating a reference to another oject, a foreign key in relational DB terms
-  // Also note User was declared with a capital U in the schema, that was a mistake
-  // but npx prisma db push, does not seem to be updating after changing it
-  // in the prisma schema, so have parked troubleshooting that for now
+  // the next-auth session
   try {
-    await prisma.pet.create({
+    await drizzleDb.insert(petsTable).values({ 
       data: { 
         ...validatedPet.data,
-      }
+      } 
     });
   } catch {
     return { message: 'Error adding pet' };
@@ -74,10 +71,9 @@ export async function editPet(petId: unknown, newPetData: unknown) {
 
   // database mutation
   try {
-    await prisma.pet.update({
-      where: { id: validatedPetId },
-      data: validatedPet.data,
-    });
+    await drizzleDb.update(petsTable)
+    .set(data: validatedPet.data)
+    .where(eq(petsTable.id, validatedPetId));
   } catch {
     return { message: 'Error editing pet' };
   }
@@ -95,9 +91,7 @@ export async function deletePet(petId: unknown) {
 
   // database mutation
   try {
-    await prisma.pet.delete({
-      where: { id: validatedPetId },
-    });
+    await db.delete(petsTable).where(eq(petsTable.name, validatedPetId));
   } catch {
     return { message: 'Error deleting pet' };
   }

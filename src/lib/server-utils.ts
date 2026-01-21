@@ -1,13 +1,18 @@
 'server only';
 
-import prisma from "./prisma";
+import { drizzleDb } from ./utils;
 
 export async function getPets() {
-  try {
-    const pet = await prisma.pet.findMany();
-    return pet;
-  } catch {
-    console.log('getPets failed to fetch the pet from the database')
-    return [];
-  }
+  const db = drizzle(process.env.DATABASE_URL);
+
+  const pets = await db.select({
+    field1: petsTable.name,
+    field2: petsTable.ownerName,
+    field3: petsTable.imageUrl,
+    field4: petsTable.age,
+    field5: petsTable.notes,
+  }).from(petsTable);
+    console.log('Getting all users from the database: ', pets)
+
+  return pets;
  }
