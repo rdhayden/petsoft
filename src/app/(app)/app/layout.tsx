@@ -5,22 +5,24 @@ import PetContextProvider from '@/contexts/pet-context-provider';
 import SearchContextProvider from '@/contexts/search-context-provider';
 import { Toaster } from 'sonner';
 import { getPets } from '@/lib/server-utils';
+import { SignIn } from "@/components/auth-components";
+import { auth } from "@/lib/auth";
+import { getUserPaidStatus } from '@/actions/actions';
+import { get } from 'http';
+import { is } from 'zod/v4/locales';
+import { redirect } from 'next/navigation';
+import { Coming_Soon } from 'next/font/google';
+import { Console } from 'console';
 
 export default async function layout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  // Fetch pet data from an API
-  // const response = await fetch(
-  //   'https://bytegrad.com/course-assets/projects/petsoft/api/pets'
-  // );
-  // if (!response.ok) {
-  //   throw new Error('Failed to fetch pets');
-  // }
-  // const data: Pet[] = await response.json();
-
   const data = await getPets();
+  const session = await auth();
+  const userId = session?.user?.id;
+  const isPaidUser = userId && await getUserPaidStatus(userId) || false;
   // Contexts are client components but wrapping components in a context provider
   // does not make everything wrapped client components, you can pass server components
   // through to client components as children, it is only when you import into a client
@@ -31,12 +33,12 @@ export default async function layout({
   return (
     <>
       <BackgroundPattern />
-      <div className="flex flex-col min-h-screen max-w-5xl mx-auto px-4">
-        <AppHeader />
-        <SearchContextProvider>
-          <PetContextProvider data={data}>{children}</PetContextProvider>
-        </SearchContextProvider>
-        <AppFooter />
+      <div className="flex flex-col min-h-screen max-w-5xl mx-auto px-4"> 
+            <AppHeader />
+            <SearchContextProvider>
+              <PetContextProvider data={data}>{children}</PetContextProvider>
+            </SearchContextProvider>
+            <AppFooter />
       </div>
 
       <Toaster position="top-center" />
