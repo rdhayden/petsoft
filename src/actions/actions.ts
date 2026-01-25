@@ -2,10 +2,10 @@
 
 import { sleep } from '@/lib/utils';
 import { petFormSchema, petIdSchema } from '@/lib/validations';
-import { Session } from 'next-auth';
 import { revalidatePath } from 'next/cache';
-import { drizzleDb } from ./utils;
+import { drizzleDb } from '@/lib/utils';
 import { eq } from 'drizzle-orm';
+import { petsTable } from '@/db/schema';
 
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY!);
 

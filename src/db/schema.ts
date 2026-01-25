@@ -1,6 +1,5 @@
 import { int, sqliteTable, text } from "drizzle-orm/sqlite-core";
-import { createId } from "@paralleldrive/cuid2";
-import { uuid } from "zod";
+import { createSelectSchema } from 'drizzle-zod';
 
 export const petsTable = sqliteTable("pets_table", {
     id: int().primaryKey({ autoIncrement: true }),
@@ -12,3 +11,5 @@ export const petsTable = sqliteTable("pets_table", {
     createdAt: int().default(Date.now()),
     updatedAt: int().default(Date.now()),
 });
+
+export const petsSchema = createSelectSchema(petsTable);
