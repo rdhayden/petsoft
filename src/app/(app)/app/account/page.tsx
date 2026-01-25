@@ -1,7 +1,5 @@
 import ContentBlock from '@/components/content-block';
 import H1 from '@/components/h1';
-import { auth } from '@/lib/auth';
-import { SignOut } from "@/components/auth-components";
 
 export default async function AccountPage() {
   // middleware should redirect if the user isn't logged in so this will only render if there is a
@@ -12,9 +10,6 @@ export default async function AccountPage() {
 
       <ContentBlock className="h-[500px] flex flex-col gap=3 justify-center items-center">
         <p>Logged in as TBC</p>
-        <div className='mt-4'>
-          <SignOut/>
-        </div>
       </ContentBlock>
     </main>
   );

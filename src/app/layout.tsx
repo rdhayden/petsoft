@@ -21,8 +21,19 @@ export default function RootLayout({
       <body
         className={`${inter.className} text-sm text-zinc-900 bg-[#E5E8EC] min-h-screen`}
       >
-        <SessionProvider>{children}</SessionProvider>
+        {children}
       </body>
     </html>
   );
 }
+
+
+  // return (
+  //   <html lang="en">
+  //     <body
+  //       className={`${inter.className} text-sm text-zinc-900 bg-[#E5E8EC] min-h-screen`}
+  //     >
+  //       <SessionProvider>{children}</SessionProvider>
+  //     </body>
+  //   </html>
+  // );

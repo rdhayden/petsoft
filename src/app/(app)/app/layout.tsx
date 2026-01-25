@@ -5,14 +5,6 @@ import PetContextProvider from '@/contexts/pet-context-provider';
 import SearchContextProvider from '@/contexts/search-context-provider';
 import { Toaster } from 'sonner';
 import { getPets } from '@/lib/server-utils';
-import { SignIn } from "@/components/auth-components";
-import { auth } from "@/lib/auth";
-import { getUserPaidStatus } from '@/actions/actions';
-import { get } from 'http';
-import { is } from 'zod/v4/locales';
-import { redirect } from 'next/navigation';
-import { Coming_Soon } from 'next/font/google';
-import { Console } from 'console';
 
 export default async function layout({
   children,

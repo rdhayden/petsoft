@@ -3,13 +3,13 @@ import { createSelectSchema } from 'drizzle-zod';
 
 export const petsTable = sqliteTable("pets_table", {
     id: int().primaryKey({ autoIncrement: true }),
-    name: text(),
-    ownerName: text(),
-    imageUrl: text(),
-    age: int(),
-    notes: text(),
+    name: text().notNull(),
+    ownerName: text().notNull(),
+    imageUrl: text().notNull(),
+    age: int().notNull(),
+    notes: text().default(""),
     createdAt: int().default(Date.now()),
     updatedAt: int().default(Date.now()),
 });
 
-export const petsSchema = createSelectSchema(petsTable);
+export const petsZodSchema = createSelectSchema(petsTable);

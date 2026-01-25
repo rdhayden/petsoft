@@ -1,6 +1,5 @@
 import 'dotenv/config';
 import { drizzle } from 'drizzle-orm/libsql';
-import { eq } from 'drizzle-orm';
 import { petsTable } from './src/db/schema';
   
 const db = drizzle(process.env.DB_FILE_NAME!);

@@ -43,9 +43,7 @@ export async function addPet(pet: unknown) {
   // the next-auth session
   try {
     await drizzleDb.insert(petsTable).values({ 
-      data: { 
-        ...validatedPet.data,
-      } 
+      ...validatedPet.data,
     });
   } catch {
     return { message: 'Error adding pet' };
@@ -72,7 +70,7 @@ export async function editPet(petId: unknown, newPetData: unknown) {
   // database mutation
   try {
     await drizzleDb.update(petsTable)
-    .set(data: validatedPet.data)
+    .set(validatedPet.data)
     .where(eq(petsTable.id, validatedPetId));
   } catch {
     return { message: 'Error editing pet' };
@@ -91,7 +89,7 @@ export async function deletePet(petId: unknown) {
 
   // database mutation
   try {
-    await db.delete(petsTable).where(eq(petsTable.name, validatedPetId));
+    await drizzleDb.delete(petsTable).where(eq(petsTable.id, validatedPetId));
   } catch {
     return { message: 'Error deleting pet' };
   }

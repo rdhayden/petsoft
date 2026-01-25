@@ -3,6 +3,7 @@
 import { usePetContext, useSearchContext } from '@/lib/hooks';
 import { cn } from '@/lib/utils';
 import Image from 'next/image';
+import { array, object } from 'zod';
 
 // Note that the imageUrl passed to the Image component is from images.unsplash.com
 // so this domain is added to next.config.mjs, Next.js blocks any external image domains
@@ -12,10 +13,14 @@ export default function PetList() {
   const { pets, selectedPetId, handleChangeSelectedPet } = usePetContext();
   const { searchQuery } = useSearchContext();
 
+  // for (const pet of pets) {
+  //   console.log(pet);
+  // }
+
   // filter pets based on search query
-  const filteredPets = pets.filter((pet) =>
-    pet.name.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  const filteredPets = searchQuery ? pets.filter((pet) =>
+    pet.name?.toLowerCase().includes(searchQuery.toLowerCase())
+  ) : pets;
 
   // note that on the Image component we set the width and height props
   // even though we override them with className styles because Next requires

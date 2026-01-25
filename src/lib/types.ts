@@ -1,5 +1,7 @@
-import { PetModel } from '@/generated/prisma/models';
+import { petsTable } from '@/db/schema';
+import { InferSelectModel } from 'drizzle-orm';
 
-// By referencing the PetModel from Prisma we only have to update our
-// Prisma model for changes to be reflected everywhere
-export type Pet = Omit<PetModel, 'id' | 'createdAt' | 'updatedAt' | 'userId'>;
+// By referencing the TPet from schema we only have to update our
+// drizzle schema for changes to be reflected everywhere
+export type TPet = InferSelectModel<typeof petsTable>;
+export type Pet = Omit<TPet, 'id' | 'createdAt' | 'updatedAt' | 'userId'>;
