@@ -12,6 +12,8 @@ export async function getPets() {
     imageUrl: petsTable.imageUrl,
     age: petsTable.age,
     notes: petsTable.notes,
+    createdAt: petsTable.createdAt,
+    updatedAt: petsTable.updatedAt,
   }).from(petsTable);
 
   return pets;
